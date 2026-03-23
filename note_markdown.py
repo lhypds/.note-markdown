@@ -4,6 +4,7 @@ import argparse
 from dotenv import load_dotenv
 
 load_dotenv()
+NOTE_DIR = os.getenv("NOTE_DIR", "../")
 USE_NSFW_FILTER = os.getenv("USE_NSFW_FILTER", "true").lower() == "true"
 
 
@@ -172,19 +173,24 @@ def main():
         help="Preview actions for one file from NOTE_DIR.",
     )
     parser.add_argument(
+        "--path",
+        help="Override NOTE_DIR with the given path.",
+    )
+    parser.add_argument(
         "filename",
         nargs="?",
         help="Filename inside NOTE_DIR. Used with --preview to process only one file.",
     )
     args = parser.parse_args()
 
-    # Read target directory from .env file
-    input_path = os.getenv("NOTE_DIR", "../")
+    # Override NOTE_DIR if --path is provided
+    global NOTE_DIR
+    if args.path:
+        NOTE_DIR = args.path
 
-    # Ensure input_path is a valid directory
-    if not os.path.isdir(input_path):
-        print(f"Error: NOTE_DIR '{input_path}' is not a valid directory.")
-        exit(1)
+    # Ensure NOTE_DIR is a valid directory
+    if not os.path.isdir(NOTE_DIR):
+        NOTE_DIR = "../"
 
     # Preview file (single file)
     if args.preview and not args.filename:
@@ -197,9 +203,9 @@ def main():
         if not filename.endswith(".txt"):
             filename += ".txt"
 
-        input_file = os.path.join(input_path, filename)
+        input_file = os.path.join(NOTE_DIR, filename)
         if not os.path.isfile(input_file):
-            print(f"Error: file '{filename}' not found inside NOTE_DIR '{input_path}'.")
+            print(f"Error: file '{filename}' not found inside NOTE_DIR '{NOTE_DIR}'.")
             exit(1)
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -216,7 +222,7 @@ def main():
 
     # Process files
     # Create .markdown folder in the target directory
-    output_path = os.path.join(input_path, ".markdown")
+    output_path = os.path.join(NOTE_DIR, ".markdown")
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
@@ -224,12 +230,12 @@ def main():
     note_filter = ["Sex", "Adult"] if USE_NSFW_FILTER else []
     processed_count = 0
 
-    for filename in os.listdir(input_path):
+    for filename in os.listdir(NOTE_DIR):
         # Assuming all your note files have .txt extension
         if filename.endswith(" Note.txt") and not any(
             x in filename for x in note_filter
         ):
-            input_file = os.path.join(input_path, filename)
+            input_file = os.path.join(NOTE_DIR, filename)
             output_file = os.path.join(output_path, filename.replace(".txt", ".md"))
 
             convert_to_markdown(input_file, output_file)
