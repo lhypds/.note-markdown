@@ -146,7 +146,9 @@ def convert_to_markdown(
             if output_line == "":
                 outfile.write("\n")
             else:
-                outfile.write(output_line + "  \n")
+                actions.append("add_2_spaces")
+                output_line += "  "
+                outfile.write(output_line + "\n")
 
             if preview:
                 if not actions:
