@@ -37,9 +37,15 @@ def convert_to_markdown(input_file, output_file, preview=False):
     output_lines = []
     preview_lines = {} if preview else None
 
+    # Pre-process lines
     p = 0
     while p < len(lines):
-        line_orig = lines[p].replace("\n", "")
+        lines[p] = lines[p].rstrip("\n").rstrip("\r")
+        p += 1
+
+    p = 0
+    while p < len(lines):
+        line_orig = lines[p]  # store the original line
         line = line_orig
         if preview:
             actions = []
@@ -64,6 +70,7 @@ def convert_to_markdown(input_file, output_file, preview=False):
 
         # Output line
         output_line = ""
+        add_2_spaces = True
 
         if not line:  # If line is empty, do nothing
             output_line = ""
@@ -79,6 +86,9 @@ def convert_to_markdown(input_file, output_file, preview=False):
             and len(lines[p]) == len(lines[p + 1])  # same length as next line
         ):
             output_line = line
+            add_2_spaces = False
+            if preview:
+                actions.append("title_or_section_title")
 
         # if the current line has only '-' or '=' and not the same width as previous line,
         # add zero-width space to prevent it from being a title
@@ -88,6 +98,16 @@ def convert_to_markdown(input_file, output_file, preview=False):
             output_line = prefix_tofu(line)
             if preview:
                 actions.append(f"prefix_tofu")
+
+        # if the current line has only '-' or '=' and has same width as previous line
+        # it is a title underline
+        elif (line.replace("-", "") == "" or line.replace("=", "") == "") and (
+            p == 0 or len(line) == len(lines[p - 1].replace("\n", ""))
+        ):
+            output_line = line
+            add_2_spaces = False
+            if preview:
+                actions.append("title_underline")
 
         # if line.trim() start with # then it is not a title in markdown
         # it is a comment, use \# to replace #
@@ -107,14 +127,12 @@ def convert_to_markdown(input_file, output_file, preview=False):
             output_line = line
 
         # Output lines append
-        if output_line == "":
-            output_lines.append("\n")
-        else:
-            # Add two spaces to all not empty lines
+        # Add two spaces to all not empty lines
+        if add_2_spaces:
             if preview:
                 actions.append("add_2_spaces")
             output_line += "  "
-            output_lines.append(output_line + "\n")
+        output_lines.append(output_line + "\n")
 
         # Preview lines append
         if preview:
