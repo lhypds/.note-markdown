@@ -51,6 +51,7 @@ Output `abc_note_pr.md` and `abc_note_pr.txt`.
 * Helper scripts  
 `note_markdown.sh`  
 `preview.sh`  
+`mdclear.sh`  
 
 
 note tools
