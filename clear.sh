@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Clear script for note-markdown project
+# Deletes the .markdown folder from the target directory
+
+set -e  # Exit on error
+
+# Load .env file
+if [ ! -f ".env" ]; then
+    echo "Error: .env file not found"
+    exit 1
+fi
+
+# Read TARGET_DIR from .env
+TARGET_DIR=$(grep "^TARGET_DIR=" .env | cut -d '=' -f 2)
+
+# Trim whitespace
+TARGET_DIR=$(echo "$TARGET_DIR" | xargs)
+
+if [ -z "$TARGET_DIR" ]; then
+    echo "Error: TARGET_DIR not found in .env"
+    exit 1
+fi
+
+MARKDOWN_PATH="$TARGET_DIR/.markdown"
+
+# Check if .markdown folder exists
+if [ ! -d "$MARKDOWN_PATH" ]; then
+    echo "No .markdown folder found at: $MARKDOWN_PATH"
+    exit 0
+fi
+
+# Confirm deletion
+read -p "Are you sure you want to delete $MARKDOWN_PATH? (y/n) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+# Delete the folder
+rm -rf "$MARKDOWN_PATH"
+echo "✓ .markdown folder deleted successfully"
