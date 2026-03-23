@@ -5,3 +5,9 @@
 *.md
 *.json
 .venv/
+build/
+dist/
+__pycache__/
+note.spec
+note
+_internal/
