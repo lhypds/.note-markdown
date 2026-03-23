@@ -31,14 +31,15 @@ def convert_to_markdown(input_file, output_file, preview=False):
 
     # Process
     output_lines = []
-    preview_actions_result = {} if preview else None
+    preview_lines = {} if preview else None
 
     p = 0
     while p < len(lines):
 
         line_orig = lines[p].replace("\n", "")
         line = line_orig
-        actions = []
+        if preview:
+            actions = []
 
         # replace the leading spaces with code block
         if line.startswith(" "):
@@ -46,15 +47,18 @@ def convert_to_markdown(input_file, output_file, preview=False):
             original_leading = line[0:leading_ws_count]
             replaced_leading = original_leading.replace(" ", "░")
             line = replaced_leading + line[leading_ws_count:]
-            actions.append(f"replace({original_leading!r},{replaced_leading!r})")
+            if preview:
+                actions.append(f"replace({original_leading!r},{replaced_leading!r})")
 
         # replace space with non-breaking space
         # alt 0 1 6 0 or alt 2 5 5 or option space on mac
         before_replace_spaces = line
         line = replace_spaces(line)
         if line != before_replace_spaces:
-            actions.append(f"replace({before_replace_spaces!r},{line!r})")
+            if preview:
+                actions.append(f"replace({before_replace_spaces!r},{line!r})")
 
+        # Output line
         output_line = ""
 
         if not line:  # If line is empty, do nothing
@@ -80,31 +84,35 @@ def convert_to_markdown(input_file, output_file, preview=False):
         # it is a comment, use \# to replace #
         elif line.startswith("#"):
             output_line = "\\" + line
-            actions.append(f"replace({line!r},{output_line!r})")
+            if preview:
+                actions.append(f"replace({line!r},{output_line!r})")
 
         # if the line.trim() starts with $ it is not a fomular in markdown
         # it is maybe a bash input, use \$ to replace the $
         elif line.startswith("$"):
             output_line = "\\" + line
-            actions.append(f"replace({line!r},{output_line!r})")
+            if preview:
+                actions.append(f"replace({line!r},{output_line!r})")
 
         else:
             output_line = line
 
+        # Output lines append
         if output_line == "":
             output_lines.append("\n")
         else:
-            actions.append("add_2_spaces")
+            if preview:
+                actions.append("add_2_spaces")
             output_line += "  "
             output_lines.append(output_line + "\n")
 
+        # Preview lines append
         if preview:
             if not actions:
                 actions = ["do_nothing"]
-            preview_actions_result[p + 1] = (
-                f"[{','.join(actions)}],{line_orig},{output_line}"
-            )
+            preview_lines[p + 1] = f"[{','.join(actions)}],{line_orig},{output_line}"
 
+        # Move pointer
         p += 1
 
     # Write
@@ -118,10 +126,10 @@ def convert_to_markdown(input_file, output_file, preview=False):
         preview_output_dir = os.path.dirname(output_file)
         preview_file = os.path.join(preview_output_dir, preview_filename)
         with open(preview_file, "w", encoding="UTF8") as preview_outfile:
-            for line_number, action_result in preview_actions_result.items():
+            for line_number, action_result in preview_lines.items():
                 preview_line = f"{line_number}: {action_result}"
                 preview_outfile.write(preview_line + "\n")
-        return preview_actions_result
+        return preview_lines
 
 
 def main():
