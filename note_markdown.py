@@ -163,15 +163,10 @@ def convert_to_markdown(
         if preview_output_dir is None:
             preview_output_dir = os.path.dirname(output_file)
         preview_file = os.path.join(preview_output_dir, preview_filename)
-
-        print("Preview actions:")
         with open(preview_file, "w", encoding="UTF8") as preview_outfile:
             for line_number, action_result in preview_actions_result.items():
                 preview_line = f"{line_number}: {action_result}"
-                print(preview_line)
                 preview_outfile.write(preview_line + "\n")
-
-        print(f"Preview output file: {preview_file}")
         return preview_actions_result
 
 
@@ -229,7 +224,7 @@ def main():
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
         output_file = os.path.join(
-            script_dir, os.path.splitext(os.path.basename(input_file))[0] + ".md"
+            script_dir, os.path.splitext(os.path.basename(input_file))[0] + "_pr.md"
         )
         convert_to_markdown(
             input_file,
