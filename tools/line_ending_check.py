@@ -1,3 +1,4 @@
+import argparse
 import os
 
 
@@ -16,7 +17,29 @@ def contains_crlf(file_path):
 
 
 def main():
-    folder_path = "../"
+    parser = argparse.ArgumentParser(
+        description="Check .txt files in a target folder for LF and CRLF line endings."
+    )
+    parser.add_argument(
+        "folder_path",
+        nargs="?",
+        help="Target folder path to scan.",
+    )
+    args = parser.parse_args()
+
+    folder_input = args.folder_path
+    if not folder_input:
+        folder_input = input("Enter target folder path: ").strip()
+
+    if not folder_input:
+        print("Error: no folder path provided.")
+        raise SystemExit(1)
+
+    folder_path = os.path.abspath(folder_input)
+
+    if not os.path.isdir(folder_path):
+        print(f"Error: '{folder_path}' is not a valid directory.")
+        raise SystemExit(1)
 
     lf_count = 0
     crlf_count = 0

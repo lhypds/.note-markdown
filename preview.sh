@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Preview script for note-markdown project
+# Preview script for note markdown converter
 # Converts a single Note .txt file to markdown with action preview
 
 set -e  # Exit on error
@@ -50,6 +50,6 @@ if [ -z "$FILENAME" ]; then
 fi
 
 echo "Previewing: $FILENAME"
-python note_markdown.py --preview "$FILENAME"
+python notemd.py --preview "$FILENAME"
 
 echo "✓ Done"

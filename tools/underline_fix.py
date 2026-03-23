@@ -133,21 +133,39 @@ def apply_fixes(fix_list_file, scan_dir):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    scan_dir = os.path.normpath(os.path.join(script_dir, ".."))
 
     parser = argparse.ArgumentParser(
         description="Check and fix underline length mismatches in note files."
     )
-    default_fix_file = os.path.join(script_dir, "underline_fix_list.json")
+    default_fix_file = os.path.join(script_dir, "scan_result.json")
+    parser.add_argument(
+        "scan_dir",
+        nargs="?",
+        help="Target directory to scan.",
+    )
 
     parser.add_argument(
         "--fix",
         nargs="?",
         const=default_fix_file,
         metavar="FIX_LIST_FILE",
-        help="Apply fixes from a JSON fix list file (default: underline_fix_list.json).",
+        help="Apply fixes from a JSON fix list file (default: scan_result.json).",
     )
     args = parser.parse_args()
+
+    scan_dir_input = args.scan_dir
+    if not scan_dir_input:
+        scan_dir_input = input("Enter scan directory path: ").strip()
+
+    if not scan_dir_input:
+        print("Error: no scan directory provided.")
+        raise SystemExit(1)
+
+    scan_dir = os.path.abspath(scan_dir_input)
+
+    if not os.path.isdir(scan_dir):
+        print(f"Error: '{scan_dir}' is not a valid directory.")
+        raise SystemExit(1)
 
     if args.fix is not None:
         apply_fixes(args.fix, scan_dir)
