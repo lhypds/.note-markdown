@@ -15,14 +15,14 @@ else
 fi
 
 # Create virtual environment if it doesn't exist
-if [ ! -d "venv" ]; then
+if [ ! -d ".venv" ]; then
     echo "Creating virtual environment..."
-    $PYTHON_CMD -m venv venv
+    $PYTHON_CMD -m venv .venv
 fi
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-source venv/bin/activate
+source .venv/bin/activate
 
 # Upgrade pip
 echo "Upgrading pip..."
@@ -43,4 +43,4 @@ fi
 
 echo ""
 echo "✓ Setup complete!"
-echo "To activate the virtual environment, run: source venv/bin/activate"
+echo "To activate the virtual environment, run: source .venv/bin/activate"
