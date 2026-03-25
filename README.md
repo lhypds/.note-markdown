@@ -29,7 +29,7 @@ Then you can run `note` command to format the notes.
 `./note [-f|--file] abc_note.txt` will format the note.  
 
 * Format on Save  
-Refer `doc` folder for setup `Format on Save` in text editor.  
+Refer [doc](https://github.com/lhypds/.note/tree/main/doc) to setup `Format on Save` for text editors.  
 Support setup for VS Code and Sublime Text.  
 
 
