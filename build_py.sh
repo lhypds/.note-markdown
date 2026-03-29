@@ -5,13 +5,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
 NOTE_ENTRY_FILE="$ROOT_DIR/note.py"
-NOTEMD_ENTRY_FILE="$ROOT_DIR/note_markdown.py"
 BUILD_MODE="onedir"
 
 if [ "${1:-}" = "--onefile" ]; then
 	BUILD_MODE="onefile"
 elif [ -n "${1:-}" ]; then
-	echo "Usage: ./build.sh [--onefile]"
+	echo "Usage: ./build_py.sh [--onefile]"
 	echo "Default build mode is onedir for faster run speed."
 	exit 1
 fi
@@ -27,15 +26,10 @@ if [ ! -f "$NOTE_ENTRY_FILE" ]; then
 	exit 1
 fi
 
-if [ ! -f "$NOTEMD_ENTRY_FILE" ]; then
-	echo "Error: Entry file not found: $NOTEMD_ENTRY_FILE"
-	exit 1
-fi
-
-echo "Building note.py and note_markdown.py with PyInstaller ($BUILD_MODE)..."
+echo "Building note.py with PyInstaller ($BUILD_MODE)..."
 cd "$ROOT_DIR"
 
-rm -rf build dist note.spec notemd.spec
+rm -rf build dist note.spec
 
 build_target() {
 	local name="$1"
@@ -45,6 +39,9 @@ build_target() {
 	local pyinstaller_args=(
 		--clean
 		--noconfirm
+		--hidden-import commands.format
+		--hidden-import commands.markdown
+		--hidden-import commands.create
 		--name "$name"
 		"$entry_file"
 	)
@@ -59,28 +56,23 @@ build_target() {
 }
 
 build_target "note" "$NOTE_ENTRY_FILE" "_internal_note"
-build_target "notemd" "$NOTEMD_ENTRY_FILE" "_internal_notemd"
 
 if [ "$BUILD_MODE" = "onefile" ]; then
 	cp "$ROOT_DIR/dist/note" "$ROOT_DIR/note"
-	cp "$ROOT_DIR/dist/notemd" "$ROOT_DIR/notemd"
-	chmod +x "$ROOT_DIR/note" "$ROOT_DIR/notemd"
+	chmod +x "$ROOT_DIR/note"
 
-	rm -rf "$ROOT_DIR/_internal_note" "$ROOT_DIR/_internal_notemd"
-	echo "Build complete: $ROOT_DIR/note and $ROOT_DIR/notemd"
+	rm -rf "$ROOT_DIR/_internal_note"
+	echo "Build complete: $ROOT_DIR/note"
 else
- 	cp "$ROOT_DIR/dist/note/note" "$ROOT_DIR/note"
-	cp "$ROOT_DIR/dist/notemd/notemd" "$ROOT_DIR/notemd"
-	chmod +x "$ROOT_DIR/note" "$ROOT_DIR/notemd"
+	cp "$ROOT_DIR/dist/note/note" "$ROOT_DIR/note"
+	chmod +x "$ROOT_DIR/note"
 
-	rm -rf "$ROOT_DIR/_internal_note" "$ROOT_DIR/_internal_notemd"
+	rm -rf "$ROOT_DIR/_internal_note"
 	cp -R "$ROOT_DIR/dist/note/_internal_note" "$ROOT_DIR/_internal_note"
-	cp -R "$ROOT_DIR/dist/notemd/_internal_notemd" "$ROOT_DIR/_internal_notemd"
-	echo "Build complete: $ROOT_DIR/note and $ROOT_DIR/notemd"
+	echo "Build complete: $ROOT_DIR/note"
 fi
 
-echo "Copied executables to: $ROOT_DIR/note, $ROOT_DIR/notemd"
+echo "Copied executable to: $ROOT_DIR/note"
 
-echo "Warming up executables..."
+echo "Warming up executable..."
 "$ROOT_DIR/note" --help >/dev/null 2>&1 || true
-"$ROOT_DIR/notemd" --help >/dev/null 2>&1 || true

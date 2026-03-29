@@ -1,22 +1,17 @@
+import argparse
 import os
 import re
-import argparse
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 def replace_spaces(line):
-    # This function will be used as the replacement function in re.sub.
-    # It takes a match object as argument,
-    # returns a string of an underscore and spaces of length one less than the match
     def replacer(match):
-        # Get the matched string
         s = match.group()
-        # Return the replacement string
         return " " + " " * (len(s) - 1)
 
-    # Use re.sub with replacer as the replacement function
     line = re.sub(" {2,}", replacer, line)
     return line
 
@@ -28,15 +23,12 @@ def prefix_tofu(line):
 def convert_to_markdown(input_file, output_file, preview=False):
     print(f"{input_file}")
 
-    # Read
     with open(input_file, "r", encoding="UTF8") as infile:
         lines = infile.readlines()
 
-    # Process
     output_lines = []
     preview_lines = {} if preview else None
 
-    # Pre-process lines
     p = 0
     while p < len(lines):
         lines[p] = lines[p].rstrip("\n").rstrip("\r")
@@ -44,62 +36,47 @@ def convert_to_markdown(input_file, output_file, preview=False):
 
     p = 0
     while p < len(lines):
-        line_orig = lines[p]  # store the original line
+        line_orig = lines[p]
         line = line_orig
         if preview:
             actions = []
 
-        # Pre-process whitespaces
-        # replace the leading spaces with code block
         if line.startswith(" "):
             leading_ws_count = len(line) - len(line.lstrip())
             original_leading = line[0:leading_ws_count]
             replaced_leading = original_leading.replace(" ", "░")
             line = replaced_leading + line[leading_ws_count:]
             if preview:
-                actions.append(f"leading_whitespace_░")
+                actions.append("leading_whitespace_░")
 
-        # replace space with non-breaking space
-        # alt 0 1 6 0 or alt 2 5 5 or option space on mac
         before_replace_spaces = line
         line = replace_spaces(line)
-        if line != before_replace_spaces:
-            if preview:
-                actions.append(f"replace_spaces")
+        if line != before_replace_spaces and preview:
+            actions.append("replace_spaces")
 
-        # Output line
         output_line = ""
         add_2_spaces = True
 
-        if not line:  # If line is empty, do nothing
+        if not line:
             output_line = ""
-
-        # if next line is all '=' or all '-' and same length,
-        # current line is a title/section title, do nothing
         elif (
             p < len(lines) - 1
             and (
                 lines[p + 1].replace("=", "") == ""
                 or lines[p + 1].replace("-", "") == ""
             )
-            and len(lines[p]) == len(lines[p + 1])  # same length as next line
+            and len(lines[p]) == len(lines[p + 1])
         ):
             output_line = line
             add_2_spaces = False
             if preview:
                 actions.append("title_or_section_title")
-
-        # if the current line has only '-' or '=' and not the same width as previous line,
-        # add zero-width space to prevent it from being a title
         elif (line.replace("-", "") == "" or line.replace("=", "") == "") and (
             p == 0 or len(line) != len(lines[p - 1].replace("\n", ""))
         ):
             output_line = prefix_tofu(line)
             if preview:
-                actions.append(f"prefix_tofu")
-
-        # if the current line has only '-' or '=' and has same width as previous line
-        # it is a title underline
+                actions.append("prefix_tofu")
         elif (line.replace("-", "") == "" or line.replace("=", "") == "") and (
             p == 0 or len(line) == len(lines[p - 1].replace("\n", ""))
         ):
@@ -107,50 +84,37 @@ def convert_to_markdown(input_file, output_file, preview=False):
             add_2_spaces = False
             if preview:
                 actions.append("title_underline")
-
-        # if the line starts with > it is a blockquote in markdown, escape it
         elif line.startswith(">"):
             output_line = prefix_tofu(line)
             if preview:
                 actions.append("prefix_tofu,escape_blockquote")
-
-        # if line.trim() start with # then it is not a title in markdown, escape it
         elif line.startswith("#"):
             output_line = prefix_tofu(line)
             if preview:
-                actions.append(f"prefix_tofu,escape_#")
-
-        # if the line.trim() starts with $ it is not a fomular in markdown, escape it
+                actions.append("prefix_tofu,escape_#")
         elif line.startswith("$"):
             output_line = prefix_tofu(line)
             if preview:
-                actions.append(f"prefix_tofu,escape_$")
-
+                actions.append("prefix_tofu,escape_$")
         else:
             output_line = line
 
-        # Output lines append
-        # Add two spaces to all not empty lines
         if add_2_spaces:
             if preview:
                 actions.append("add_2_spaces")
             output_line += "  "
         output_lines.append(output_line + "\n")
 
-        # Preview lines append
         if preview:
             if not actions:
                 actions = ["do_nothing"]
             preview_lines[p + 1] = f"[{','.join(actions)}],{line_orig},{output_line}"
 
-        # Move pointer
         p += 1
 
-    # Write
     with open(output_file, "w", encoding="UTF8") as outfile:
         outfile.writelines(output_lines)
 
-    # Preview (output)
     if preview:
         original_name = os.path.splitext(os.path.basename(input_file))[0]
         preview_filename = f"{original_name}_pr.txt"
@@ -163,7 +127,7 @@ def convert_to_markdown(input_file, output_file, preview=False):
         return preview_lines
 
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--file",
@@ -176,11 +140,16 @@ def main():
         action="store_true",
         help="Preview actions for the file.",
     )
-    args = parser.parse_args()
+    return parser
+
+
+def main(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     if not args.file:
         print("Error: no file path provided.")
-        exit(1)
+        raise SystemExit(1)
 
     input_file = args.file.strip()
     if not input_file.endswith(".txt"):
@@ -188,7 +157,7 @@ def main():
 
     if not os.path.isfile(input_file):
         print(f"Error: file '{input_file}' not found.")
-        exit(1)
+        raise SystemExit(1)
 
     parent_dir = os.path.dirname(os.path.abspath(input_file))
     output_path = os.path.join(parent_dir, ".markdown")
