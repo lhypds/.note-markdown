@@ -14,21 +14,16 @@ mkdir -p "$RELEASE_DIR/rust"
 # Build Python binaries and move to release/python
 echo "Building Python..."
 "$ROOT_DIR/build_py.sh"
-mv "$ROOT_DIR/note"   "$RELEASE_DIR/python/note"
-mv "$ROOT_DIR/notemd" "$RELEASE_DIR/python/notemd"
+mv "$ROOT_DIR/note" "$RELEASE_DIR/python/note"
 if [ -d "$ROOT_DIR/_internal_note" ]; then
-	mv "$ROOT_DIR/_internal_note"   "$RELEASE_DIR/python/_internal_note"
-fi
-if [ -d "$ROOT_DIR/_internal_notemd" ]; then
-	mv "$ROOT_DIR/_internal_notemd" "$RELEASE_DIR/python/_internal_notemd"
+	mv "$ROOT_DIR/_internal_note" "$RELEASE_DIR/python/_internal_note"
 fi
 echo "Python binaries moved to $RELEASE_DIR/python"
 
 # Build Rust binaries and move to release/rust
 echo "Building Rust..."
 "$ROOT_DIR/build_rs.sh"
-mv "$ROOT_DIR/note"   "$RELEASE_DIR/rust/note"
-mv "$ROOT_DIR/notemd" "$RELEASE_DIR/rust/notemd"
+mv "$ROOT_DIR/note" "$RELEASE_DIR/rust/note"
 echo "Rust binaries moved to $RELEASE_DIR/rust"
 
 echo "Release complete: $RELEASE_DIR"
