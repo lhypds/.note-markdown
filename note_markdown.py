@@ -232,9 +232,7 @@ def main():
 
     for filename in os.listdir(NOTE_DIR):
         # Assuming all your note files have .txt extension
-        if filename.endswith(" Note.txt") and not any(
-            x in filename for x in note_filter
-        ):
+        if filename.endswith(".txt") and not any(x in filename for x in note_filter):
             input_file = os.path.join(NOTE_DIR, filename)
             output_file = os.path.join(output_path, filename.replace(".txt", ".md"))
 

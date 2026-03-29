@@ -319,7 +319,7 @@ fn main() {
             continue;
         };
 
-        if filename.ends_with(" Note.txt") && !note_filter.iter().any(|f| filename.contains(f)) {
+        if filename.ends_with(".txt") && !note_filter.iter().any(|f| filename.contains(f)) {
             let input_file = Path::new(&note_dir).join(filename);
             let output_file = output_path.join(filename.replace(".txt", ".md"));
 
