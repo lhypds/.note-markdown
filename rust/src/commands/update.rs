@@ -273,7 +273,7 @@ pub fn main(argv: &[String]) {
     download_file(&download_url, &archive_path);
 
     // 7. Extract
-    let extract_dir = updates_dir.join(format!("note_v{}", latest_version));
+    let extract_dir = updates_dir.join(format!("dot_note_v{}", latest_version));
     extract_archive(&archive_path, &extract_dir);
 
     // 8. Find and run install.sh

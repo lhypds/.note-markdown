@@ -174,7 +174,7 @@ def main(argv=None):
     download_file(download_url, archive_path)
 
     # ── 7. Extract ────────────────────────────────────────────────────────────
-    extract_dir = os.path.join(updates_dir, f"note_v{latest_version}")
+    extract_dir = os.path.join(updates_dir, f"dot_note_v{latest_version}")
     extract_archive(archive_path, extract_dir)
 
     # ── 8. Find and run install.sh ────────────────────────────────────────────
