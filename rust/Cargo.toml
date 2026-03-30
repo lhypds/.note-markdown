@@ -3,6 +3,10 @@ name = "note"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "note"
+path = "src/note.rs"
+
 [dependencies]
 unicode-width = "0.1"
 dotenvy = "0.15"
