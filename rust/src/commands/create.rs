@@ -12,7 +12,14 @@ pub fn run(name: &str, directory: &str) -> Result<(), String> {
 
     let title = name;
     let title_underline = "=".repeat(display_width(title));
-    let section = name;
+
+    // Support `note`
+    let section = if name.ends_with("Note") {
+        name[..name.len() - 4].trim_end()
+    } else {
+        name
+    };
+    
     let section_underline = "-".repeat(display_width(section));
 
     let content = format!(

@@ -35,6 +35,11 @@ echo "Ready to publish release:"
 echo "  Tag:    $VERSION"
 echo "  Asset:  $ZIP_PATH"
 echo ""
+read -r -p "Release notes (leave blank for default): " RELEASE_NOTES
+if [ -z "$RELEASE_NOTES" ]; then
+	RELEASE_NOTES="Release $VERSION"
+fi
+echo ""
 read -r -p "Publish to GitHub? [Y/n]: " CONFIRM
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
 	echo "Aborted."
@@ -44,6 +49,6 @@ fi
 # Create tag and GitHub release, upload zip
 gh release create "$VERSION" "$ZIP_PATH" \
 	--title "$VERSION" \
-	--notes "Release $VERSION"
+	--notes "$RELEASE_NOTES"
 
 echo "Published release $VERSION with $ZIP_PATH"

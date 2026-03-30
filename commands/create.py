@@ -17,7 +17,10 @@ def create_note(name, directory="."):
 
     title = name
     title_underline = "=" * display_width(title)
-    section = name
+
+    # Support `note`
+    section = name[:-5].rstrip() if name.endswith("Note") else name
+
     section_underline = "-" * display_width(section)
 
     content = (
