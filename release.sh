@@ -30,7 +30,8 @@ echo "Rust binaries moved to $RELEASE_DIR/rust"
 
 echo "Release complete: $RELEASE_DIR"
 
-ZIP_NAME="dot_note.zip"
+VERSION="$(cat "$ROOT_DIR/VERSION" | tr -d '[:space:]')"
+ZIP_NAME="dot_note_v${VERSION}.zip"
 ZIP_PATH="$RELEASE_DIR/$ZIP_NAME"
 TMP_ZIP_PATH="$ROOT_DIR/$ZIP_NAME"
 
