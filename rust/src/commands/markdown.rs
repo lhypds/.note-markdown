@@ -220,12 +220,9 @@ pub fn main(argv: &[String]) {
         std::process::exit(1);
     }
 
-    let parent_dir = input_file
-        .parent()
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."));
-
-    let output_path = parent_dir.join(".markdown");
+    let output_path = std::env::current_dir()
+        .unwrap_or_else(|_| PathBuf::from("."))
+        .join(".markdown");
     if !output_path.exists() {
         if let Err(e) = fs::create_dir_all(&output_path) {
             eprintln!("Error creating output directory: {}", e);

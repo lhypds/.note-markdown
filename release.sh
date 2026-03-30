@@ -39,7 +39,13 @@ if [ -f "$TMP_ZIP_PATH" ]; then
 	rm -f "$TMP_ZIP_PATH"
 fi
 
+# Copy install/uninstall scripts to release
+cp "$ROOT_DIR/install.sh" "$RELEASE_DIR/install.sh"
+cp "$ROOT_DIR/uninstall.sh" "$RELEASE_DIR/uninstall.sh"
+chmod +x "$RELEASE_DIR/install.sh" "$RELEASE_DIR/uninstall.sh"
+echo "Copied install.sh and uninstall.sh to $RELEASE_DIR"
+
 cd "$RELEASE_DIR"
-zip -r -9 "$TMP_ZIP_PATH" "python" "rust"
+zip -r -9 "$TMP_ZIP_PATH" "python" "rust" "install.sh" "uninstall.sh"
 mv "$TMP_ZIP_PATH" "$ZIP_PATH"
 echo "Created archive: $ZIP_PATH"

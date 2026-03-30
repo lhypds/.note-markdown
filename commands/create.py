@@ -49,8 +49,8 @@ def build_parser():
     parser.add_argument(
         "--directory",
         "-d",
-        default="../",
-        help="Directory to create the note in. Defaults to parent directory.",
+        default=".",
+        help="Directory to create the note in. Defaults to current directory.",
     )
     return parser
 

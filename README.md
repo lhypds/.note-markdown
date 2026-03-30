@@ -50,11 +50,11 @@ command: create
 ---------------
 
 `create` - Create a new note file.  
-`./note create --name "Abc`  
+`./note create --name "Abc"`  
 It will create a new note file with name `Abc Note.txt`.
 
 `[-d|--directory]`  
-Specify the directory to create the note in. Defaults to parent directory.  
+Specify the directory to create the note in. Defaults to current directory.  
 `./note create --name "Abc" --directory path/to/directory`  
 
 
@@ -63,7 +63,8 @@ command: markdown
 
 `markdown` - Convert note to Markdown format.  
 `./note markdown [-f|--file] path/to/note.txt`  
-It will convert `note.txt` to `note.md`.  
+It will convert `note.txt` to `note.md`,  
+and output to `.markdown` folder in current directory.  
 
 `--preview`  
 `./note markdown --preview path/to/note.txt` will generate `note_pr.md` and `note_pr.txt` for preview.  

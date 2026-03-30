@@ -159,8 +159,7 @@ def main(argv=None):
         print(f"Error: file '{input_file}' not found.")
         raise SystemExit(1)
 
-    parent_dir = os.path.dirname(os.path.abspath(input_file))
-    output_path = os.path.join(parent_dir, ".markdown")
+    output_path = os.path.join(os.getcwd(), ".markdown")
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 

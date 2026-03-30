@@ -29,7 +29,7 @@ pub fn run(name: &str, directory: &str) -> Result<(), String> {
 
 pub fn main(argv: &[String]) {
     let mut name: Option<String> = None;
-    let mut directory = "../".to_string();
+    let mut directory = ".".to_string();
 
     let mut i = 0usize;
     while i < argv.len() {
