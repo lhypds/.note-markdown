@@ -1,9 +1,12 @@
+import os
 import sys
 
 from commands import create as create_command
 from commands import format as format_command
 from commands import markdown as markdown_command
 
+_VERSION_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "VERSION")
+VERSION = open(_VERSION_FILE).read().strip()
 
 HELP = """Usage: note <command> [options]
 
@@ -49,6 +52,10 @@ def main(argv=None):
 
     if command in ("-h", "--help"):
         print(HELP)
+        return
+
+    if command in ("-v", "--version"):
+        print(VERSION)
         return
 
     if command == "create":

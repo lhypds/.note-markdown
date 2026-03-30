@@ -15,8 +15,8 @@ mkdir -p "$RELEASE_DIR/rust"
 echo "Building Python..."
 "$ROOT_DIR/build_py.sh"
 mv "$ROOT_DIR/note" "$RELEASE_DIR/python/note"
-if [ -d "$ROOT_DIR/_internal_note" ]; then
-	mv "$ROOT_DIR/_internal_note" "$RELEASE_DIR/python/_internal_note"
+if [ -d "$ROOT_DIR/_internal" ]; then
+	mv "$ROOT_DIR/_internal" "$RELEASE_DIR/python/_internal"
 fi
 echo "Python binaries moved to $RELEASE_DIR/python"
 

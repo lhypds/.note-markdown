@@ -14,6 +14,12 @@ if [ "$OS" != "Darwin" ]; then
     exit 1
 fi
 
+# ── Check executable exists ──────────────────────────────────────────────────
+if [ ! -f "$ROOT_DIR/note" ]; then
+    echo "Abort: 'note' executable not found in $ROOT_DIR."
+    exit 1
+fi
+
 # ── Choose variant ───────────────────────────────────────────────────────────
 VARIANT="${1:-}"
 
@@ -42,28 +48,19 @@ case "$VARIANT" in
         ;;
 esac
 
-# ── Locate release binary ─────────────────────────────────────────────────
-RELEASE_DIR="$ROOT_DIR/release/$VARIANT"
-
-if [ ! -f "$RELEASE_DIR/note" ]; then
-    echo "Error: binary not found at $RELEASE_DIR/note"
-    echo "Run './build.sh $VARIANT' first."
-    exit 1
-fi
-
 # ── Install ───────────────────────────────────────────────────────────────
 echo "Installing note ($VARIANT) …"
 
 if [ "$VARIANT" = "rust" ]; then
     # Single self-contained binary — copy directly into BIN_DIR
-    sudo install -m 755 "$RELEASE_DIR/note" "$BIN_DIR/note"
+    sudo install -m 755 "$ROOT_DIR/note" "$BIN_DIR/note"
     echo "Installed: $BIN_DIR/note"
 
 elif [ "$VARIANT" = "python" ]; then
     # PyInstaller onedir bundle — install bundle then symlink
     sudo rm -rf "$LIB_DIR"
     sudo mkdir -p "$LIB_DIR"
-    sudo cp -R "$RELEASE_DIR/." "$LIB_DIR/"
+    sudo cp -R "$ROOT_DIR/." "$LIB_DIR/"
     sudo chmod 755 "$LIB_DIR/note"
 
     # Remove any previous binary/symlink

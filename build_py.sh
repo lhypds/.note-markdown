@@ -55,20 +55,20 @@ build_target() {
 	"$PYTHON_BIN" -m PyInstaller "${pyinstaller_args[@]}"
 }
 
-build_target "note" "$NOTE_ENTRY_FILE" "_internal_note"
+build_target "note" "$NOTE_ENTRY_FILE" "_internal"
 
 if [ "$BUILD_MODE" = "onefile" ]; then
 	cp "$ROOT_DIR/dist/note" "$ROOT_DIR/note"
 	chmod +x "$ROOT_DIR/note"
 
-	rm -rf "$ROOT_DIR/_internal_note"
+	rm -rf "$ROOT_DIR/_internal"
 	echo "Build complete: $ROOT_DIR/note"
 else
 	cp "$ROOT_DIR/dist/note/note" "$ROOT_DIR/note"
 	chmod +x "$ROOT_DIR/note"
 
-	rm -rf "$ROOT_DIR/_internal_note"
-	cp -R "$ROOT_DIR/dist/note/_internal_note" "$ROOT_DIR/_internal_note"
+	rm -rf "$ROOT_DIR/_internal"
+	cp -R "$ROOT_DIR/dist/note/_internal" "$ROOT_DIR/_internal"
 	echo "Build complete: $ROOT_DIR/note"
 fi
 

@@ -30,6 +30,8 @@ Commands:
             Options:
               --preview               Also write a preview action log file.";
 
+const VERSION: &str = env!("APP_VERSION");
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let argv = &args[1..];
@@ -44,6 +46,7 @@ fn main() {
 
     match command {
         "-h" | "--help" => println!("{}", HELP),
+        "-v" | "--version" => println!("{}", VERSION),
         "format" => commands::format::main(command_args),
         "markdown" => commands::markdown::main(command_args),
         "create" => commands::create::main(command_args),

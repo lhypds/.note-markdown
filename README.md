@@ -23,7 +23,7 @@ Use `setup.sh` to setup and use `build.sh` to build.
 
 * Rust version  
 Locate at `rust` folder.  
-Rust version is faster.  
+Rust version is faster and the executable is a single file.  
 `cargo` is required, use `brew install rust` to install.  
 
 Run `build.sh` to select Python or Rust.  
