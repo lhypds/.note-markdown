@@ -14,17 +14,17 @@ pub fn run(name: &str, directory: &str) -> Result<(), String> {
     let title_underline = "=".repeat(display_width(title));
 
     // Support `note`
-    let section = if name.ends_with("Note") {
-        name[..name.len() - 4].trim_end()
+    let section_block = if name.ends_with("Note") {
+        let section = name[..name.len() - 4].trim_end();
+        let section_underline = "-".repeat(display_width(section));
+        format!("{}\n{}\n\n\n", section, section_underline)
     } else {
-        name
+        String::new()
     };
-    
-    let section_underline = "-".repeat(display_width(section));
 
     let content = format!(
-        "\n{}\n{}\n\n\n{}\n{}\n\n\n",
-        title, title_underline, section, section_underline
+        "\n{}\n{}\n\n\n{}",
+        title, title_underline, section_block
     );
 
     fs::write(&file_path, content)

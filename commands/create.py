@@ -19,21 +19,14 @@ def create_note(name, directory="."):
     title_underline = "=" * display_width(title)
 
     # Support `note`
-    section = name[:-5].rstrip() if name.endswith("Note") else name
+    if name.endswith("Note"):
+        section = name[:-5].rstrip()
+        section_underline = "-" * display_width(section)
+        section_block = f"{section}\n{section_underline}\n\n\n"
+    else:
+        section_block = ""
 
-    section_underline = "-" * display_width(section)
-
-    content = (
-        f"\n"
-        f"{title}\n"
-        f"{title_underline}\n"
-        f"\n"
-        f"\n"
-        f"{section}\n"
-        f"{section_underline}\n"
-        f"\n"
-        f"\n"
-    )
+    content = f"\n" f"{title}\n" f"{title_underline}\n" f"\n" f"\n" f"{section_block}"
 
     with open(file_path, "w", encoding="UTF8") as f:
         f.write(content)
