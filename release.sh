@@ -62,3 +62,5 @@ cd "$RELEASE_DIR"
 zip -r -9 "$TMP_ZIP_PATH" "python" "rust" "README.txt" "LICENSE"
 mv "$TMP_ZIP_PATH" "$ZIP_PATH"
 echo "Created archive: $ZIP_PATH"
+
+./release_gh.sh
