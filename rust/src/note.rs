@@ -46,7 +46,7 @@ fn main() {
 
     match command {
         "-h" | "--help" => println!("{}", HELP),
-        "-v" | "--version" => println!("{}", VERSION),
+        "-v" | "--version" => println!("v{} (rust)", VERSION),
         "format" => commands::format::main(command_args),
         "markdown" => commands::markdown::main(command_args),
         "create" => commands::create::main(command_args),

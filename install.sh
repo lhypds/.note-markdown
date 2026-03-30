@@ -20,33 +20,19 @@ if [ ! -f "$ROOT_DIR/note" ]; then
     exit 1
 fi
 
-# ── Choose variant ───────────────────────────────────────────────────────────
-VARIANT="${1:-}"
+# ── Detect variant from executable ──────────────────────────────────────────
+VERSION_OUTPUT="$("$ROOT_DIR/note" --version 2>/dev/null || true)"
 
-if [ -z "$VARIANT" ]; then
-    echo "Choose which build to install:"
-    echo "1) rust   (recommended – single binary, no dependencies)"
-    echo "2) python (PyInstaller bundle)"
-    read -r -p "Enter choice [1-2, default 1]: " CHOICE
-    CHOICE="${CHOICE:-1}"
-
-    case "$CHOICE" in
-        1|rust)   VARIANT="rust"   ;;
-        2|python) VARIANT="python" ;;
-        *)
-            echo "Error: invalid choice."
-            exit 1
-            ;;
-    esac
+if echo "$VERSION_OUTPUT" | grep -q "(rust)"; then
+    VARIANT="rust"
+elif echo "$VERSION_OUTPUT" | grep -q "(python)"; then
+    VARIANT="python"
+else
+    echo "Error: could not detect build type from 'note --version' output: '$VERSION_OUTPUT'"
+    exit 1
 fi
 
-case "$VARIANT" in
-    rust|python) ;;
-    *)
-        echo "Error: unknown variant '$VARIANT'. Use 'rust' or 'python'."
-        exit 1
-        ;;
-esac
+echo "Detected build type: $VARIANT"
 
 # ── Install ───────────────────────────────────────────────────────────────
 echo "Installing note ($VARIANT) …"

@@ -55,7 +55,7 @@ def main(argv=None):
         return
 
     if command in ("-v", "--version"):
-        print(VERSION)
+        print(f"v{VERSION} (python)")
         return
 
     if command == "create":
