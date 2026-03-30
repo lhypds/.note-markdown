@@ -4,15 +4,20 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 RELEASE_DIR="$ROOT_DIR/release"
-ZIP_PATH="$RELEASE_DIR/dot_note.zip"
-VERSION_FILE="$ROOT_DIR/VERSION"
 
-# Read version
-if [ ! -f "$VERSION_FILE" ]; then
-	echo "Error: VERSION file not found."
-	exit 1
+# Accept VERSION and BUILD_ZIP as arguments, or derive them
+if [ $# -ge 2 ]; then
+	VERSION="$1"
+	ZIP_PATH="$2"
+else
+	VERSION_FILE="$ROOT_DIR/VERSION"
+	if [ ! -f "$VERSION_FILE" ]; then
+		echo "Error: VERSION file not found."
+		exit 1
+	fi
+	VERSION="v$(cat "$VERSION_FILE" | tr -d '[:space:]')"
+	ZIP_PATH="$RELEASE_DIR/dot_note_${VERSION}.zip"
 fi
-VERSION="v$(cat "$VERSION_FILE" | tr -d '[:space:]')"
 
 # Check zip exists
 if [ ! -f "$ZIP_PATH" ]; then
