@@ -56,18 +56,16 @@ RUST_ZIP_NAME="dot_note_rust_v${VERSION}.zip"
 PYTHON_ZIP_PATH="$RELEASE_DIR/$PYTHON_ZIP_NAME"
 RUST_ZIP_PATH="$RELEASE_DIR/$RUST_ZIP_NAME"
 
-for f in "$RELEASE_DIR/$PYTHON_ZIP_NAME" "$ROOT_DIR/$PYTHON_ZIP_NAME" \
-          "$RELEASE_DIR/$RUST_ZIP_NAME" "$ROOT_DIR/$RUST_ZIP_NAME"; do
+for f in "$RELEASE_DIR/$PYTHON_ZIP_NAME" "$RELEASE_DIR/$RUST_ZIP_NAME"; do
 	[ -f "$f" ] && rm -f "$f"
 done
 
-cd "$RELEASE_DIR"
-zip -r -9 "$ROOT_DIR/$PYTHON_ZIP_NAME" "python"
-mv "$ROOT_DIR/$PYTHON_ZIP_NAME" "$PYTHON_ZIP_PATH"
+cd "$RELEASE_DIR/python"
+zip -r -9 "$PYTHON_ZIP_PATH" .
 echo "Created archive: $PYTHON_ZIP_PATH"
 
-zip -r -9 "$ROOT_DIR/$RUST_ZIP_NAME" "rust"
-mv "$ROOT_DIR/$RUST_ZIP_NAME" "$RUST_ZIP_PATH"
+cd "$RELEASE_DIR/rust"
+zip -r -9 "$RUST_ZIP_PATH" .
 echo "Created archive: $RUST_ZIP_PATH"
 
 "$ROOT_DIR/release_gh.sh" "v${VERSION}" "$PYTHON_ZIP_PATH" "$RUST_ZIP_PATH"

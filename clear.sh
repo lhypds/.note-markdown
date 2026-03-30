@@ -9,3 +9,4 @@ rm -rf dist/
 
 rm -rf test/.markdown
 rm -rf release/
+rm -rf updates/
