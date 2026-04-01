@@ -59,6 +59,7 @@ def convert_to_markdown(input_file, output_file, preview=False):
 
         if not line:
             output_line = ""
+
         elif (
             p < len(lines) - 1
             and (
@@ -71,12 +72,14 @@ def convert_to_markdown(input_file, output_file, preview=False):
             add_2_spaces = False
             if preview:
                 actions.append("title_or_section_title")
+
         elif (line.replace("-", "") == "" or line.replace("=", "") == "") and (
             p == 0 or len(line) != len(lines[p - 1].replace("\n", ""))
         ):
             output_line = prefix_tofu(line)
             if preview:
                 actions.append("prefix_tofu")
+
         elif (line.replace("-", "") == "" or line.replace("=", "") == "") and (
             p == 0 or len(line) == len(lines[p - 1].replace("\n", ""))
         ):
@@ -84,18 +87,30 @@ def convert_to_markdown(input_file, output_file, preview=False):
             add_2_spaces = False
             if preview:
                 actions.append("title_underline")
+
+        # Escape blockquote, heading, and code line
         elif line.startswith(">"):
             output_line = prefix_tofu(line)
             if preview:
                 actions.append("prefix_tofu,escape_blockquote")
+
         elif line.startswith("#"):
             output_line = prefix_tofu(line)
             if preview:
                 actions.append("prefix_tofu,escape_#")
+
         elif line.startswith("$"):
             output_line = prefix_tofu(line)
             if preview:
                 actions.append("prefix_tofu,escape_$")
+
+        # Markdown image, syntax: ![alt text](image_url)
+        elif re.match(r"!\[.*\]\(.*\)", line):
+            output_line = line
+            add_2_spaces = False
+            if preview:
+                actions.append("do_nothing,markdown_image")
+
         else:
             output_line = line
 
@@ -103,6 +118,7 @@ def convert_to_markdown(input_file, output_file, preview=False):
             if preview:
                 actions.append("add_2_spaces")
             output_line += "  "
+
         output_lines.append(output_line + "\n")
 
         if preview:

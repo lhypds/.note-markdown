@@ -38,6 +38,17 @@ fn is_underline_candidate(line: &str) -> bool {
     !line.is_empty() && (line.chars().all(|c| c == '=') || line.chars().all(|c| c == '-'))
 }
 
+fn is_markdown_image(line: &str) -> bool {
+    if !line.starts_with("![") {
+        return false;
+    }
+    if let Some(close_bracket) = line.find("](") {
+        close_bracket > 1 && line.ends_with(')')
+    } else {
+        false
+    }
+}
+
 fn trim_crlf(s: &str) -> String {
     s.trim_end_matches(['\n', '\r']).to_string()
 }
@@ -84,6 +95,7 @@ pub fn run(input_file: &Path, output_file: &Path, preview: bool) -> Result<(), S
 
         if line.is_empty() {
             output_line.clear();
+
         } else if p < lines.len() - 1
             && (lines[p + 1].replace('=', "").is_empty()
                 || lines[p + 1].replace('-', "").is_empty())
@@ -94,6 +106,7 @@ pub fn run(input_file: &Path, output_file: &Path, preview: bool) -> Result<(), S
             if preview {
                 actions.push("title_or_section_title".to_string());
             }
+
         } else if is_underline_candidate(&line)
             && (p == 0
                 || line.chars().count() != lines[p - 1].trim_end_matches(['\n', '\r']).chars().count())
@@ -102,6 +115,7 @@ pub fn run(input_file: &Path, output_file: &Path, preview: bool) -> Result<(), S
             if preview {
                 actions.push("prefix_tofu".to_string());
             }
+
         } else if is_underline_candidate(&line)
             && (p == 0
                 || line.chars().count() == lines[p - 1].trim_end_matches(['\n', '\r']).chars().count())
@@ -111,20 +125,32 @@ pub fn run(input_file: &Path, output_file: &Path, preview: bool) -> Result<(), S
             if preview {
                 actions.push("title_underline".to_string());
             }
+
+        // Escape blockquote, heading, and code line
         } else if line.starts_with('>') {
             output_line = prefix_tofu(&line);
             if preview {
                 actions.push("prefix_tofu,escape_blockquote".to_string());
             }
+
         } else if line.starts_with('#') {
             output_line = prefix_tofu(&line);
             if preview {
                 actions.push("prefix_tofu,escape_#".to_string());
             }
+
         } else if line.starts_with('$') {
             output_line = prefix_tofu(&line);
             if preview {
                 actions.push("prefix_tofu,escape_$".to_string());
+            }
+
+        // Markdown image, syntax: ![alt text](image_url)
+        } else if is_markdown_image(&line) {
+            output_line = line.clone();
+            add_2_spaces = false;
+            if preview {
+                actions.push("do_nothing,markdown_image".to_string());
             }
         } else {
             output_line = line.clone();
@@ -136,6 +162,7 @@ pub fn run(input_file: &Path, output_file: &Path, preview: bool) -> Result<(), S
             }
             output_line.push_str("  ");
         }
+        
         output_lines.push(format!("{}\n", output_line));
 
         if preview {
