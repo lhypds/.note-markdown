@@ -165,6 +165,7 @@ pub fn run(file_path: &Path) -> Result<(), String> {
     fs::write(file_path, lines.concat())
         .map_err(|e| format!("failed to write '{}': {}", file_path.display(), e))?;
 
+    println!("Fixed {} issues, file: {}", fixed_count, file_path.display());
     Ok(())
 }
 

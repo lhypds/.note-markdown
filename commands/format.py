@@ -136,6 +136,8 @@ def format_note(file_path):
     with open(file_path, "w", encoding="UTF8") as file:
         file.writelines(lines)
 
+    print(f"Fixed {fixed_count} issues, file: {file_path}")
+
 
 def build_parser():
     parser = argparse.ArgumentParser(
