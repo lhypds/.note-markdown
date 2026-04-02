@@ -87,7 +87,7 @@ fn count_open_tags(line: &str, tag: &str) -> usize {
                 }
             }
         }
-        i += 1;
+        i += lower[i..].chars().next().map_or(1, |c| c.len_utf8());
     }
     count
 }
@@ -106,7 +106,7 @@ fn count_close_tags(line: &str, tag: &str) -> usize {
                 count += 1;
             }
         }
-        i += 1;
+        i += lower[i..].chars().next().map_or(1, |c| c.len_utf8());
     }
     count
 }
