@@ -30,11 +30,9 @@ Commands:
               <file>                  Target note file path.
 
   markdown  Convert a note file to Markdown.
-  2md       Alias for 'markdown'.
             Output is written to a .markdown/ folder in the current directory.
 
             note markdown <file> [--preview]
-            note 2md <file> [--preview]
 
             Arguments:
               <file>                  Path to the .txt file to process.
@@ -76,7 +74,7 @@ def main(argv=None):
         format_command.main(command_args)
         return
 
-    if command in ("markdown", "2md"):
+    if command == "markdown":
         markdown_command.main(command_args)
         return
 
